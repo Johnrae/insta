@@ -10,11 +10,7 @@ export default React.createClass({
 
   updateMessage(event) {
     let newMessage = event.target.value;
-
-    // let size = newMessage.length;
-
-    // let secret = SECRET_MESSAGE.substring(0, size);
-
+    
     this.setState({
       message: newMessage
     });
