@@ -6,9 +6,9 @@ export default Backbone.Router.extend({
 
   routes: {
     ""       : "showHome",
+    "detail" : "showDetail",
     "add"    : "showAdd",
-    "edit"   : "showEdit",
-    "detail" : "showDetail"
+    "edit"   : "showEdit"
 
   },
 

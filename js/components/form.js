@@ -10,14 +10,10 @@ export default React.createClass({
 
   updateMessage(event) {
     let newMessage = event.target.value;
-    
+
     this.setState({
       message: newMessage
     });
-  },
-
-  cancelHandler() {
-    this.props.onCancelClick();
   },
 
   submitHandler(event) {
@@ -30,9 +26,11 @@ export default React.createClass({
     return(
       <div>
         <form onSubmit={this.submitHandler}>
-          <input onChange={this.updateMessage} type="text" value={this.state.message}/>
+          <input onChange={this.updateMessage} type="text" value={this.state.message}>Image Url</input>
+          <input onChange={this.updateMessage} type="text" value={this.state.message}>Title</input>
+          <input onChange={this.updateMessage} type="textarea" value={this.state.message}>Description</input>
+          <input type="submit">Submit</input>
         </form>
-        <button onClick={this.cancelHandler}>Cancel</button>
       </div>
 
     );
