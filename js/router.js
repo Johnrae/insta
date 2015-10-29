@@ -12,8 +12,21 @@ export default Backbone.Router.extend({
 
   },
 
+  initailize(appElement){
+    this.el = appElement;
+  },
+
+  start() {
+    Backbone.history.start();
+    return this;
+  },
+
   showHome() {
 
+  },
+
+  render(component) {
+    ReactDom.render(component, this.el);
   },
 
   showDetail() {
@@ -25,7 +38,7 @@ export default Backbone.Router.extend({
   },
 
   showEdit() {
-    
+
   }
 
 
