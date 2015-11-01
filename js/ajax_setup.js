@@ -1,7 +1,7 @@
 import $ from 'jquery';
 
-import APP_ID from './parse_data';
-import API_KEY from './parse_data';
+import {APP_ID} from './parse_data';
+import {API_KEY} from './parse_data';
 
 $.ajaxSetup({
   headers: {
