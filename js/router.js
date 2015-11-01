@@ -1,7 +1,7 @@
 import Backbone from 'backbone';
 import React from 'react';
 import ReactDom from 'react-dom';
-
+import Home from './components/home';
 export default Backbone.Router.extend({
 
   routes: {
@@ -22,6 +22,11 @@ export default Backbone.Router.extend({
   },
 
   showHome() {
+    ReactDom.render(
+      //placeholder should be the name of the data object
+      <ThumbnailList src={data}/>,
+      this.el
+    );
 
   },
 
