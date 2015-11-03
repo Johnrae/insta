@@ -3,54 +3,66 @@ import React from 'react';
 import ReactDom from 'react-dom';
 
 import PictureCollection from './picture_collection';
-import PictureModel from './picture_model';
 import ThumbnailList from './components/thumbnailList';
-import HomeComponent from './components/home';
+import Thumbnail from './components/thumbnail';
+import DetailView from './components/detail';
+
 
 export default Backbone.Router.extend({
 
   routes: {
     ""       : "redirectToHome",
     "home"   : "showHome", 
-    "detail" : "showDetail",
+    "detail/:id" : "showDetail",
     "add"    : "showAdd",
     "edit"   : "showEdit"
-
   },
 
-  initailize(appElement){
+  initialize(appElement){
     this.el = appElement;
     this.collection = new PictureCollection();
-    console.log(this.collection);
-  },
-
-  goto(route) {
-    this.navigate(route, {
-      trigger: true
-    });
   },
 
   start() {
     Backbone.history.start();
     return this;
   },
+  
+  selectImage(id){
+    this.navigate('detail/' + id, {trigger: true})
+  },
+
+  render(component) {
+    ReactDom.render(component, this.el)
+  },
 
   showHome() {
-    this.picCollection.fetch().then(()=> {
-      let data= this.collection.toJSON();
+    this.collection.fetch().then(()=> {
+      let data = this.collection.toJSON(); 
 
-      ReactDom.render(
-        <HomeComponent parse={data} onThumbnailSelect={this.selectImage.bind(this)} />,
-      this.el); //end of render
-       
+      this.render(
+        <ThumbnailList data={data} onThumbnailSelect={this.selectImage.bind(this)}/>
+      );  
     });
   },
 
+  showDetail(id) {
+    let singleImage = this.collection.get(id);
 
-  render(component) {
-    ReactDom.render(component, this.el);
+    if (singleImage){
+      this.render(
+        <DetailView data={singleImage.toJSON()}/>
+      );
+    } else {
+      singleImage = this.collection.add({objectId: id});
+      singleImage.fetch().then(() => {
+        this.render(
+          <DetailView
+            data={image.toJSON()}/>
+        );
+      });
+    }
   },
-
 
   redirectToHome() {
     this.navigate('home', {

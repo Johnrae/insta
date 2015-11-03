@@ -1,10 +1,9 @@
 import Backbone from 'backbone';
-import {APP_URL} from './parse_data';
 import Picture from './picture_model';
 
-export default Backbone.Collection.extend ({
+export default Backbone.Collection.extend({
 
-  url: APP_URL,
+  url: 'https://api.parse.com/1/classes/data',
 
   model: Picture,
 

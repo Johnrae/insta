@@ -17,29 +17,46 @@ _jquery2['default'].ajaxSetup({
 });
 
 },{"./parse_data":6,"jquery":12}],2:[function(require,module,exports){
-"use strict";
+'use strict';
 
-Object.defineProperty(exports, "__esModule", {
+Object.defineProperty(exports, '__esModule', {
   value: true
 });
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
-exports["default"] = _react2["default"].createClass({
-  displayName: "home",
+var _thumbnail = require('./thumbnail');
+
+var _thumbnail2 = _interopRequireDefault(_thumbnail);
+
+exports['default'] = _react2['default'].createClass({
+  displayName: 'detail',
 
   render: function render() {
-    return _react2["default"].createElement("img", { src: " {this.props.map(url)} " });
+    return _react2['default'].createElement(
+      'div',
+      null,
+      _react2['default'].createElement(_thumbnail2['default'], { key: this.props.data.objectId, src: this.props.data.url, className: 'bigboy' }),
+      _react2['default'].createElement(
+        'h2',
+        null,
+        this.props.data.title
+      ),
+      _react2['default'].createElement(
+        'p',
+        null,
+        this.props.data.description
+      )
+    );
   }
-
 });
-module.exports = exports["default"];
+module.exports = exports['default'];
 
-},{"react":169}],3:[function(require,module,exports){
+},{"./thumbnail":3,"react":169}],3:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -143,11 +160,9 @@ Object.defineProperty(exports, '__esModule', {
 });
 var APP_ID = 'Gvw4CHgp9CZ1iBQ2KxlDDgmOuk2sBLOsroAQArNM';
 var API_KEY = 'tcNxlNUtmvjFW86JUsHGHaIZvu9dwejOukUAiZK2';
-var APP_URL = 'https://api.parse.com/1/classes/data';
 
 exports.APP_ID = APP_ID;
 exports.API_KEY = API_KEY;
-exports.APP_URL = APP_URL;
 
 },{}],7:[function(require,module,exports){
 'use strict';
@@ -162,15 +177,13 @@ var _backbone = require('backbone');
 
 var _backbone2 = _interopRequireDefault(_backbone);
 
-var _parse_data = require('./parse_data');
-
 var _picture_model = require('./picture_model');
 
 var _picture_model2 = _interopRequireDefault(_picture_model);
 
 exports['default'] = _backbone2['default'].Collection.extend({
 
-  url: _parse_data.APP_URL,
+  url: 'https://api.parse.com/1/classes/data',
 
   model: _picture_model2['default'],
 
@@ -181,7 +194,7 @@ exports['default'] = _backbone2['default'].Collection.extend({
 });
 module.exports = exports['default'];
 
-},{"./parse_data":6,"./picture_model":8,"backbone":10}],8:[function(require,module,exports){
+},{"./picture_model":8,"backbone":10}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -194,18 +207,16 @@ var _backbone = require('backbone');
 
 var _backbone2 = _interopRequireDefault(_backbone);
 
-var _parse_data = require('./parse_data');
-
 exports['default'] = _backbone2['default'].Model.extend({
 
-  urlRoot: _parse_data.APP_URL,
+  urlRoot: 'https://api.parse.com/1/classes/data',
 
   idAttribute: 'objectId'
 
 });
 module.exports = exports['default'];
 
-},{"./parse_data":6,"backbone":10}],9:[function(require,module,exports){
+},{"backbone":10}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -230,39 +241,31 @@ var _picture_collection = require('./picture_collection');
 
 var _picture_collection2 = _interopRequireDefault(_picture_collection);
 
-var _picture_model = require('./picture_model');
-
-var _picture_model2 = _interopRequireDefault(_picture_model);
-
 var _componentsThumbnailList = require('./components/thumbnailList');
 
 var _componentsThumbnailList2 = _interopRequireDefault(_componentsThumbnailList);
 
-var _componentsHome = require('./components/home');
+var _componentsThumbnail = require('./components/thumbnail');
 
-var _componentsHome2 = _interopRequireDefault(_componentsHome);
+var _componentsThumbnail2 = _interopRequireDefault(_componentsThumbnail);
+
+var _componentsDetail = require('./components/detail');
+
+var _componentsDetail2 = _interopRequireDefault(_componentsDetail);
 
 exports['default'] = _backbone2['default'].Router.extend({
 
   routes: {
     "": "redirectToHome",
     "home": "showHome",
-    "detail": "showDetail",
+    "detail/:id": "showDetail",
     "add": "showAdd",
     "edit": "showEdit"
-
   },
 
-  initailize: function initailize(appElement) {
+  initialize: function initialize(appElement) {
     this.el = appElement;
     this.collection = new _picture_collection2['default']();
-    console.log(this.collection);
-  },
-
-  goto: function goto(route) {
-    this.navigate(route, {
-      trigger: true
-    });
   },
 
   start: function start() {
@@ -270,18 +273,38 @@ exports['default'] = _backbone2['default'].Router.extend({
     return this;
   },
 
-  showHome: function showHome() {
-    var _this = this;
-
-    this.picCollection.fetch().then(function () {
-      var data = _this.collection.toJSON();
-
-      _reactDom2['default'].render(_react2['default'].createElement(_componentsHome2['default'], { parse: data, onThumbnailSelect: _this.selectImage.bind(_this) }), _this.el); //end of render
-    });
+  selectImage: function selectImage(id) {
+    this.navigate('detail/' + id, { trigger: true });
   },
 
   render: function render(component) {
     _reactDom2['default'].render(component, this.el);
+  },
+
+  showHome: function showHome() {
+    var _this = this;
+
+    this.collection.fetch().then(function () {
+      var data = _this.collection.toJSON();
+
+      _this.render(_react2['default'].createElement(_componentsThumbnailList2['default'], { data: data, onThumbnailSelect: _this.selectImage.bind(_this) }));
+    });
+  },
+
+  showDetail: function showDetail(id) {
+    var _this2 = this;
+
+    var singleImage = this.collection.get(id);
+
+    if (singleImage) {
+      this.render(_react2['default'].createElement(_componentsDetail2['default'], { data: singleImage.toJSON() }));
+    } else {
+      singleImage = this.collection.add({ objectId: id });
+      singleImage.fetch().then(function () {
+        _this2.render(_react2['default'].createElement(_componentsDetail2['default'], {
+          data: image.toJSON() }));
+      });
+    }
   },
 
   redirectToHome: function redirectToHome() {
@@ -294,7 +317,7 @@ exports['default'] = _backbone2['default'].Router.extend({
 });
 module.exports = exports['default'];
 
-},{"./components/home":2,"./components/thumbnailList":4,"./picture_collection":7,"./picture_model":8,"backbone":10,"react":169,"react-dom":13}],10:[function(require,module,exports){
+},{"./components/detail":2,"./components/thumbnail":3,"./components/thumbnailList":4,"./picture_collection":7,"backbone":10,"react":169,"react-dom":13}],10:[function(require,module,exports){
 (function (global){
 //     Backbone.js 1.2.3
 
