@@ -6,6 +6,8 @@ import PictureCollection from './picture_collection';
 import ThumbnailList from './components/thumbnailList';
 import Thumbnail from './components/thumbnail';
 import DetailView from './components/detail';
+import AddView from './components/add';
+
 
 
 export default Backbone.Router.extend({
@@ -62,6 +64,10 @@ export default Backbone.Router.extend({
         );
       });
     }
+  },
+
+  showAdd() {
+    this.render(<AddView data={this.collection.toJSON()}/>);
   },
 
   redirectToHome() {
